@@ -1,5 +1,6 @@
 import names
 import os
+from requests import post, get
 
 class main():
     def __init__(self):
@@ -34,14 +35,24 @@ class main():
     def __getURL(self):
         os.system ("clear")
         print("***** Direccion *****")
-        self.URL = input("Introduce direccion (192.168.1.2:200): ")
+        self.URL = input("Introduce direccion (192.168.1.2): ")
+        self.URL = "http://" + self.URL
         print("Direccion guardada con exito")
         input("Presiones cualquier tecla para regresar al menu...")
+
     def __postData(self):
         os.system ("clear")
         print("***** Direccion *****")
-        print("Datos enviados con exito hacia:",self.URL)
-        input("Presiones cualquier tecla para regresar al menu...")
+        url = self.URL+":3000/post/insert"
+        try:
+            for nota in self.datos:
+                auth_data = {'autor': nota['autor'], 'nota': nota['nota']}
+                post(url, data=auth_data)
+            print("Datos enviados con exito hacia:",url)
+        except:
+            print("Fallo al enviar data.")
+        finally:
+            input("Presiones cualquier tecla para regresar al menu...")
 
     def menu(self):
         salir = False

@@ -3,10 +3,12 @@ services:
     mongo:
         container_name: mongoDB
         image: mongo
+        environment: 
+            - MONGO_INITDB_DATABASE=sopesDB
         ports:
             - "27017:27017"
     python:
         container_name: server
-        image: andreeavalos/serverA
+        image: andreeavalos/server-a
         ports:
             - "3000:3000"
