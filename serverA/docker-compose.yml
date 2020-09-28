@@ -1,0 +1,12 @@
+version: '3'
+services:
+    mongo:
+        container_name: mongoDB
+        image: mongo
+        ports:
+            - "27017:27017"
+    python:
+        container_name: server
+        image: andreeavalos/serverA
+        ports:
+            - "3000:3000"

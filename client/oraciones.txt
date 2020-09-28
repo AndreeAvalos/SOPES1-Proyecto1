@@ -1,0 +1,4 @@
+Se deberá crear un programa escrito en Python (no es necesaria una interfaz gráfica). 
+Este deberá leer el contenido de un archivo de texto, dividirlo en oraciones, luego creará un objeto por cada oración y le asociará un usuario (la asignación del usuario queda a criterio del estudiantes).
+Cada uno de estos elementos debe ser enviado al ​ Balanceador de carga como una petición POST, debe hacerse una petición por cada objeto.
+El programa solicitará la ruta del archivo a dividir y la dirección a donde realizará las peticiones (la dirección del ​ Balanceador​ ), almacenará los objetos obtenidos del último análisis y podrá mostrarlos
