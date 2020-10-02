@@ -5,10 +5,16 @@ services:
         image: mongo
         environment: 
             - MONGO_INITDB_DATABASE=sopesDB
+        network_mode: "bridge"
         ports:
             - "27017:27017"
     python:
-        container_name: server
-        image: andreeavalos/server-a
+        container_name: serve
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        network_mode: "bridge"
         ports:
             - "3000:3000"
+        volumes: 
+            - "/proc/:/elements/procs/"
