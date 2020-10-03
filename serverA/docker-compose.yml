@@ -9,7 +9,7 @@ services:
         ports:
             - "27017:27017"
     python:
-        container_name: serve
+        container_name: server
         build: 
             context: .
             dockerfile: Dockerfile
