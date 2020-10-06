@@ -1,1 +1,1 @@
-FROM
+FROM node:alphine

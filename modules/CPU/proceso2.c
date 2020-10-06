@@ -10,18 +10,32 @@
 #include <linux/slab.h>
 #include <linux/mm.h>
 #include <linux/swap.h>
+#include <linux/stat.h>
 
+#define STATS_CPU_SIZE	(sizeof(struct stats_cpu))
+#define __nr_t		int
+
+struct stats_cpu {
+	unsigned long long cpu_user;
+	unsigned long long cpu_nice;
+	unsigned long long cpu_sys;
+	unsigned long long cpu_idle;
+	unsigned long long cpu_iowait;
+	unsigned long long cpu_steal;
+	unsigned long long cpu_hardirq;
+	unsigned long long cpu_softirq;
+	unsigned long long cpu_guest;
+	unsigned long long cpu_guest_nice;
+};
+
+__nr_t read_stat_cpu
+	(struct stats_cpu *, __nr_t);
 
 static int meminfo_proc_show(struct seq_file *m, void *v){
-    struct sysinfo sys_info;
-    unsigned long cpu;
-    unsigned long usage;
-    si_meminfo(&sys_info);
-    
-    cpu = sys_info.loads[0]*100/4;
-    usage = cpu/(1 << SI_LOAD_SHIFT);
-
-    seq_printf(m,"CPU: %ld %%",usage);
+    struct stats_cpu *cpu;
+    memset(cpu,0, STATS_CPU_SIZE);
+    read_stat_cpu(cpu,0);
+    seq_printf(m,"%lld",cpu->cpu_user);
     
     return 0;
 }
