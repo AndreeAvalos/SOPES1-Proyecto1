@@ -20,6 +20,10 @@ def getRAM(entrada):
     ram = usage[1].split(" ")
     return str(ram[1])
 
+def getCPU(entrada):
+    usage = entrada.split(":")
+    cpu = usage[1].split("%")
+    return str(cpu[0])
 
 @app.route('/')
 def inicio():
@@ -49,8 +53,8 @@ def insert():
         else:
             resA = requests.get(urlA+"/get/cpu")
             resB = requests.get(urlB+"/get/cpu")
-            numA = int(resA.text)
-            numB = int(resB.text)
+            numA = int(getCPU(resA.text))
+            numB = int(getCPU(resB.text))
             if numA>numB:
                 requests.post(urlB+"/post/insert", data={'autor': autor, 'nota': nota})
             elif numB>numA:
