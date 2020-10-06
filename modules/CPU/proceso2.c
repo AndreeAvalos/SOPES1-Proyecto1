@@ -1,42 +1,99 @@
 #include <linux/module.h>
 #include <linux/init.h>
-#include <linux/kernel.h>
+#include <linux/kernel_stat.h>
 #include <linux/proc_fs.h>
-#include <linux/sched.h>
-#include <linux/uaccess.h>
-#include <linux/fs.h>
-#include <linux/sysinfo.h>
 #include <linux/seq_file.h>
-#include <linux/slab.h>
-#include <linux/mm.h>
-#include <linux/swap.h>
-#include <linux/stat.h>
+#include <linux/tick.h>
+#include <linux/delay.h>
 
-#define STATS_CPU_SIZE	(sizeof(struct stats_cpu))
-#define __nr_t		int
+//Metodos obtenidos de stat.c
+static u64 get_idle_time(int cpu)
+{
+	u64 idle, idle_time = -1ULL;
 
-struct stats_cpu {
-	unsigned long long cpu_user;
-	unsigned long long cpu_nice;
-	unsigned long long cpu_sys;
-	unsigned long long cpu_idle;
-	unsigned long long cpu_iowait;
-	unsigned long long cpu_steal;
-	unsigned long long cpu_hardirq;
-	unsigned long long cpu_softirq;
-	unsigned long long cpu_guest;
-	unsigned long long cpu_guest_nice;
-};
+	if (cpu_online(cpu))
+		idle_time = get_cpu_idle_time_us(cpu, NULL);
 
-__nr_t read_stat_cpu
-	(struct stats_cpu *, __nr_t);
+	if (idle_time == -1ULL)
+		idle = kcpustat_cpu(cpu).cpustat[CPUTIME_IDLE];
+	else
+		idle = nsecs_to_jiffies64(idle_time);
 
-static int meminfo_proc_show(struct seq_file *m, void *v){
-    struct stats_cpu *cpu;
-    memset(cpu,0, STATS_CPU_SIZE);
-    read_stat_cpu(cpu,0);
-    seq_printf(m,"%lld",cpu->cpu_user);
+	return idle;
+}
+
+//Metodos obtenidos de stat.c
+static u64 get_iowait_time(int cpu)
+{
+	u64 iowait, iowait_time = -1ULL;
+
+	if (cpu_online(cpu))
+		iowait_time = get_cpu_iowait_time_us(cpu, NULL);
+
+	if (iowait_time == -1ULL)
+		iowait = kcpustat_cpu(cpu).cpustat[CPUTIME_IOWAIT];
+	else
+		iowait = nsecs_to_jiffies64(iowait_time);
+
+	return iowait;
+}
+
+
+static int cpu_stat_show(struct seq_file *m, void *v){
+    int i;
+    u64 Total = 0;
+	unsigned long long total_jiffies_1, total_jiffies_2;
+	unsigned long long work_jiffies_1, work_jiffies_2;
+	unsigned int work_over_period, total_over_period;
+	unsigned int usage;
+
+    u64 user, nice, system, idle, iowait, irq, softirq, steal;
+ 	u64 guest, guest_nice;
     
+    user = nice = system = idle = iowait = irq = softirq = steal = 0;
+	guest = guest_nice = 0;
+    //recorremos todos los cpus y sumamos sus procesos
+    for_each_possible_cpu(i) {
+		user += kcpustat_cpu(i).cpustat[CPUTIME_USER];
+		nice += kcpustat_cpu(i).cpustat[CPUTIME_NICE];
+		system += kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM];
+		idle += get_idle_time(i);
+		iowait += get_iowait_time(i);
+		irq += kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
+		softirq += kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ];
+		steal += kcpustat_cpu(i).cpustat[CPUTIME_STEAL];
+		guest += kcpustat_cpu(i).cpustat[CPUTIME_GUEST];
+		guest_nice += kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE];
+	}
+    Total = user + nice + system + idle + iowait + irq + softirq + steal + guest + guest_nice;
+	work_jiffies_1 = jiffies_64_to_clock_t(user+nice+system);
+	total_jiffies_1 = jiffies_64_to_clock_t(Total);
+    //delay para obtener otra medicion
+	mdelay(200);
+	user = nice = system = idle = iowait = irq = softirq = steal = 0;
+	guest = guest_nice = 0;
+    for_each_possible_cpu(i) {
+		user += kcpustat_cpu(i).cpustat[CPUTIME_USER];
+		nice += kcpustat_cpu(i).cpustat[CPUTIME_NICE];
+		system += kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM];
+		idle += get_idle_time(i);
+		iowait += get_iowait_time(i);
+		irq += kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
+		softirq += kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ];
+		steal += kcpustat_cpu(i).cpustat[CPUTIME_STEAL];
+		guest += kcpustat_cpu(i).cpustat[CPUTIME_GUEST];
+		guest_nice += kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE];
+	}
+    Total = user + nice + system + idle + iowait + irq + softirq + steal + guest + guest_nice;
+	work_jiffies_2 = jiffies_64_to_clock_t(user+nice+system);
+	total_jiffies_2 = jiffies_64_to_clock_t(Total);
+
+	work_over_period = work_jiffies_2-work_jiffies_1;
+	total_over_period = total_jiffies_2-total_jiffies_1;
+	usage = work_over_period*100/total_over_period;
+
+	
+	seq_printf(m, "CPU:%d%% \n",usage);
     return 0;
 }
 
@@ -44,7 +101,7 @@ static ssize_t proc_write(struct file *file, const char __user *buffer, size_t c
     return 0;
 }
 static int meminfo_proc_open(struct inode *inode, struct file *file){
-    return single_open(file, meminfo_proc_show, NULL);
+    return single_open(file, cpu_stat_show, NULL);
 }
 static const struct file_operations meminfo_proc_fops = {
     .owner = THIS_MODULE,
@@ -55,7 +112,7 @@ static const struct file_operations meminfo_proc_fops = {
     .write = proc_write
 };
 
-static int __init inicio(void){
+static int __init Inicio(void){
     
     struct proc_dir_entry *entry;
     entry = proc_create("cpu-info",0777,NULL, &meminfo_proc_fops);
@@ -72,7 +129,8 @@ static void __exit Terminar(void){
     printk(KERN_INFO "Sistemas Operativos 1\n");
 }
 
-
-module_init(inicio);
-module_exit(Terminar);
+MODULE_AUTHOR("Andree Avalos");
 MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("Modulo para calcular el uso de CPU");
+module_init(Inicio);
+module_exit(Terminar);

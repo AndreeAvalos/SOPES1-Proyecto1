@@ -37,7 +37,9 @@ def get_ram():
 
 @app.route('/get/cpu')
 def get_cpu():
-    ''
+    archivo = open('/elements/procs/cpu-info','r')
+    contenido = archivo.read()
+    return contenido
 
 if __name__ == '__main__':
     app.run('0.0.0.0', 3000, debug= False)
