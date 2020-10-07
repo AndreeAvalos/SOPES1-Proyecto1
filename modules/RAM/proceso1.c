@@ -12,7 +12,6 @@ static int meminfo_proc_show(struct seq_file *m, void *v){
     unsigned long totalram;
     unsigned long freeram;
     unsigned long available;
-    unsigned long resta;
     unsigned long multiplicacion;
     unsigned long usage;
     si_meminfo(&sys_info);
