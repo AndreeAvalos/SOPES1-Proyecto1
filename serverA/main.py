@@ -3,7 +3,7 @@ from flask_cors import CORS
 from pymongo import MongoClient
 
 
-cliente = MongoClient(host = [ str("172.17.0.2") + ":" + str(27017) ], serverSelectionTimeoutMS = 3000)
+cliente = MongoClient(host = [ str("172.17.0.3") + ":" + str(27017) ], serverSelectionTimeoutMS = 3000)
 db = cliente["sopesDB"]
 coleccion = db["publicacion"]
 
