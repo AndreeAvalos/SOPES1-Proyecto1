@@ -4,8 +4,8 @@ import os
 import requests
 
 #constantes
-serverA = os.getenv('SERVERA', '104.154.153.247')
-serverB = os.getenv('SERVERB', '35.194.41.237')
+serverA = os.getenv('SERVERA', '34.122.196.15')
+serverB = os.getenv('SERVERB', '35.225.228.8')
 PORT = 3000
 urlA = "http://{0}:{1}".format(serverA,PORT)
 urlB = "http://{0}:{1}".format(serverB,PORT)

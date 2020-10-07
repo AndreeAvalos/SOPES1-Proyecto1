@@ -11,13 +11,19 @@ class Graficas extends Component{
                         {
                             label: "Ram Servidor A",
                             backgroundColor:"rgba(31,96,236,0.75)",
-                            data: [0,0,0,,0]
+                            data: [0]
                         },
                         {
                             label: "Ram Servidor B",
                             backgroundColor:"rgba(65,236,31,0.75)",
+                            data:[0]
+                        },
+                        {
+                            label: "Ram BASE",
+                            backgroundColor:"rgba(0,0,0,0.75)",
                             data:[0,0,0,0,0]
                         }
+                    
                     ]
             },
             cpu :{
@@ -46,7 +52,7 @@ class Graficas extends Component{
         return(
             <div>
                 <h1>Grafica</h1>
-                <div style={{position:"relative",width: 600, height:600}}>
+                <div style={{position:"relative",width: 500, height:500}}>
                     <h3>USO DE RAM</h3>
                     <Line
                     options = {{
@@ -54,6 +60,7 @@ class Graficas extends Component{
                     }}
                     data ={this.state.ram}
                     />
+                    <h5>RAM A: {this.props.ramA}%       RAM B: {this.props.ramB}%</h5>
                     <h3>USO DE CPU</h3>
                     <Line
                     options = {{
@@ -61,6 +68,7 @@ class Graficas extends Component{
                     }}
                     data ={this.state.cpu}
                     />
+                    <h5>CPU A: {this.props.cpuA}%       CPU B: {this.props.cpuB}%</h5>
                 </div>
             </div>
         )
