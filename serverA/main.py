@@ -33,12 +33,14 @@ def get_publicaciones():
 def get_ram():
     archivo = open('/elements/procs/mem-info','r')
     contenido = archivo.read()
+    archivo.close()
     return contenido
 
 @app.route('/get/cpu')
 def get_cpu():
     archivo = open('/elements/procs/cpu-info','r')
     contenido = archivo.read()
+    archivo.close()
     return contenido
 
 if __name__ == '__main__':
