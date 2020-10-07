@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 from pymongo import MongoClient
+import json
 
 
 cliente = MongoClient(host = [ str("172.17.0.3") + ":" + str(27017) ], serverSelectionTimeoutMS = 3000)
@@ -23,6 +24,9 @@ def insert():
     nota = request.form['nota']
     insercion(autor, nota)
     return "OK"
+@app.route('/get/collection')
+def get_collections():
+    return json.loads(coleccion.find())
 
 @app.route('/get/publicaciones')
 def get_publicaciones():
