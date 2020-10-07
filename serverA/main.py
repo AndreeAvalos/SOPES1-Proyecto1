@@ -1,8 +1,6 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from pymongo import MongoClient
-import json
-
 
 cliente = MongoClient(host = [ str("172.17.0.3") + ":" + str(27017) ], serverSelectionTimeoutMS = 3000)
 db = cliente["sopesDB"]
@@ -26,7 +24,16 @@ def insert():
     return "OK"
 @app.route('/get/collection')
 def get_collections():
-    return json.loads(coleccion.find())
+    all = db.publicacion.find()
+    data = []
+    for documento in all:
+        item = {
+            'autor' :   documento['autor'],
+            'nota'  :   documento['nota']
+        }
+        data.append(item)
+
+    return jsonify(data)
 
 @app.route('/get/publicaciones')
 def get_publicaciones():
