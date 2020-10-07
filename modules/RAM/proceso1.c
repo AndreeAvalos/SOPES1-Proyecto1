@@ -20,7 +20,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v){
     freeram = sys_info.freeram *(unsigned long long)sys_info.mem_unit/ 1024;
     available = si_mem_available() *(unsigned long long)sys_info.mem_unit/ 1024;
     
-    multiplicacion = freeram*100;
+    multiplicacion = (available+freeram)*100;
 
     usage = multiplicacion/totalram;
     seq_printf(m, "\"RAM\": %ld| \"FREE\": %ld | \"USADA\": %ld %%", totalram,freeram,100-usage);
