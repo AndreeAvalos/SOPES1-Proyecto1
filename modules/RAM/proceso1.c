@@ -11,6 +11,7 @@ static int meminfo_proc_show(struct seq_file *m, void *v){
     struct sysinfo sys_info;
     unsigned long totalram;
     unsigned long freeram;
+    unsigned long available;
     unsigned long resta;
     unsigned long multiplicacion;
     unsigned long usage;
@@ -18,8 +19,9 @@ static int meminfo_proc_show(struct seq_file *m, void *v){
 
     totalram = sys_info.totalram*(unsigned long long)sys_info.mem_unit / 1024;
     freeram = sys_info.freeram *(unsigned long long)sys_info.mem_unit/ 1024;
+    available = si_mem_available() *(unsigned long long)sys_info.mem_unit/ 1024;
     
-    resta = totalram-freeram;
+    resta = totalram-(freeram+available);
     multiplicacion = resta*100;
 
     usage = multiplicacion/totalram;
