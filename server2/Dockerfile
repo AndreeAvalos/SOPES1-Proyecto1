@@ -1,13 +1,12 @@
 FROM node:alpine
 #Creamos una estacion de trabajo
 WORKDIR /server
+COPY package.json . 
+COPY package-lock.json .
 #Instalamos react
 RUN npm install create-react-app
 #Instalamos todo lo necesario para poder correr la app de react
-RUN npm install react-router-dom \
-    && npm install react-chartjs-2 \
-    && npm install --save chart.js \
-    && npm install react-border-wrapper
+RUN npm install
 #copiamos todo el contenido de la carpeta hacia /server
 COPY . .
 #Comando para iniciar 
