@@ -11,5 +11,3 @@ RUN npm install \
     && serve -s build
 #copiamos todo el contenido de la carpeta hacia /server
 COPY . .
-#Comando para iniciar 
-CMD ["npm", "start"]
