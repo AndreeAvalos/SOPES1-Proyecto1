@@ -51,7 +51,7 @@ class Graficas extends Component{
         this.state.cpu.datasets[1].data = this.props.arregloCpuB;
         return(
             <div>
-                <h1>Grafica</h1>
+                <h1>Graficas Servidor A y B</h1>
                 <div style={{position:"relative",width: 500, height:500}}>
                     <h3>USO DE RAM</h3>
                     <Line

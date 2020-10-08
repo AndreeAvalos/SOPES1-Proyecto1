@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import Graficas from './components/Graficas';
+import Datos from './components/Datos'
 import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
+import Navbar from './components/Navbar';
 
 
 export default class App extends Component{
@@ -17,12 +19,15 @@ export default class App extends Component{
             ramA:0,
             ramB:0,
             cpuA:0,
-            cpuB:0
+            cpuB:0,
+            DatosA: [{"autor":"Andree", "nota":"Bienvenidos a Publicaciones A"}],
+            DatosB: [{"autor":"Andree", "nota":"Bienvenidos a Publicaciones B"}]
         }
         
     }
+
     async USAGE_RAMA(){
-        var url = "http://"+this.urla+":3000"+"/get/ram"
+        var url = "http://".concat(this.urla,":3000","/get/ram")
         var response = await fetch(url);
         var data = await response.text();
         var segmentos = data.split("|");
@@ -40,7 +45,7 @@ export default class App extends Component{
         console.log("RAM A",result);        
     }
     async USAGE_CPUA(){
-        var url = "http://"+this.urla+":3000"+"/get/cpu"
+        var url = "http://".concat(this.urla,":3000","/get/cpu")
         var response = await fetch(url);
         var data = await response.text();
         var usage = data.split(":");
@@ -56,7 +61,7 @@ export default class App extends Component{
         //console.log(result);        
     }
     async USAGE_RAMB(){
-        var url = "http://"+this.urlb+":3000"+"/get/ram"
+        var url = "http://".concat(this.urlb,":3000","/get/ram")
         var response = await fetch(url);
         var data = await response.text();
         var segmentos = data.split("|");
@@ -73,7 +78,7 @@ export default class App extends Component{
         console.log("RAM B:",result);        
     }
     async USAGE_CPUB(){
-        var url = "http://"+this.urlb+":3000"+"/get/cpu"
+        var url = "http://".concat(this.urlb,":3000","/get/cpu")
         var response = await fetch(url);
         var data = await response.text();
         var usage = data.split(":");
@@ -88,12 +93,29 @@ export default class App extends Component{
         this.setState({arregloCpuB:result, cpuB: arregloCpu[0] });
         //console.log(result);        
     }
+
+    async GETDATOSA(){
+        var url = "http://".concat(this.urla,":3000","/get/collection")
+        var response = await fetch(url);
+        var data = await response.json();
+        this.setState({DatosA:data})
+    }
+    
+    async GETDATOSB(){
+        var url = "http://".concat(this.urlb,":3000","/get/collection")
+        var response = await fetch(url);
+        var data = await response.json();
+        this.setState({DatosB:data})
+    }
+
     componentWillMount(){
         setInterval(() => {
             this.USAGE_RAMA();
             this.USAGE_CPUA();
             this.USAGE_RAMB();
             this.USAGE_CPUB();
+            this.GETDATOSA();
+            this.GETDATOSB();
         }, 5000);
     }
 
@@ -101,10 +123,17 @@ export default class App extends Component{
         return(
             <Router>
                 <div className="App">
+                    <Navbar ></Navbar>
                     <Switch>
                         <Route path= "/charts">
                             <Graficas   ramA={this.state.ramA} ramB={this.state.ramB} cpuA={this.state.cpuA} cpuB={this.state.cpuB}
                                         arregloRamA={this.state.arregloRamA} arregloRamB = {this.state.arregloRamB} arregloCpuA = {this.state.arregloCpuA} arregloCpuB = {this.state.arregloCpuB} />
+                        </Route>
+                        <Route path="/dataA">
+                            <Datos data={this.state.DatosA} name="A"/>
+                        </Route>
+                        <Route path="/dataB">
+                            <Datos data={this.state.DatosB} name="B"/>
                         </Route>
                     </Switch>
                 </div>
