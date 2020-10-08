@@ -4,9 +4,10 @@ WORKDIR /server
 COPY package.json . 
 COPY package-lock.json .
 #Instalamos react
-RUN npm install create-react-app
+RUN npm install create-react-app 
 #Instalamos todo lo necesario para poder correr la app de react
-RUN npm install
+RUN npm install \
+    && npm install -g server
 #copiamos todo el contenido de la carpeta hacia /server
 COPY . .
 #Comando para iniciar 
