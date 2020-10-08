@@ -7,8 +7,7 @@ COPY package-lock.json .
 RUN npm install create-react-app 
 #Instalamos todo lo necesario para poder correr la app de react
 RUN npm install \
-    && npm install -g server \
-    && serve -s build
+    && npm install -g server 
 #copiamos todo el contenido de la carpeta hacia /server
 COPY . .
 #Comando para iniciar 
