@@ -1,4 +1,4 @@
-FROM node:alphine
+FROM node:alpine
 #Creamos una estacion de trabajo
 WORKDIR /server
 #Instalamos react
