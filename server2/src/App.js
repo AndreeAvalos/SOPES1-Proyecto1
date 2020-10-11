@@ -4,7 +4,6 @@ import Datos from './components/Datos'
 import { BrowserRouter as Router, Switch, Route} from "react-router-dom";
 import Navbar from './components/Navbar';
 
-
 export default class App extends Component{
 
     constructor(props){
@@ -123,7 +122,8 @@ export default class App extends Component{
         return(
             <Router>
                 <div className="App">
-                    <Navbar ></Navbar>
+                    <Navbar >
+                    </Navbar>
                     <Switch>
                         <Route path= "/charts">
                             <Graficas   ramA={this.state.ramA} ramB={this.state.ramB} cpuA={this.state.cpuA} cpuB={this.state.cpuB}

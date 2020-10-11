@@ -35,7 +35,7 @@ class main():
     def __getURL(self):
         os.system ("clear")
         print("***** Direccion *****")
-        self.URL = input("Introduce direccion (192.168.1.2): ")
+        self.URL = input("Introduce direccion (35.232.223.186): ")
         self.URL = "http://" + self.URL
         print("Direccion guardada con exito")
         input("Presiones cualquier tecla para regresar al menu...")

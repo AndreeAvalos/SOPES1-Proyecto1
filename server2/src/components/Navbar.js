@@ -8,6 +8,7 @@ class Navbar extends React.Component {
         return (
             <nav className="navbar navbar-inverse" >
                 <div className="container-fluid">
+                    <style>{"body { background-color: skyblue; }"}</style>
                     <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                         <ul className="nav navbar-nav navbar-right">
                            <li className={this.getNavLinkClass("/charts")}><NavLink to="/charts">Graficas</NavLink></li>
